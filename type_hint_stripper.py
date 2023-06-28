@@ -1,9 +1,12 @@
 
 #! DEVELOPER FILE
-#! Purpose: To remove all type hints from python files.
+#! Purpose: To remove all type hints from python script files.
 #! It is possible to specify a specific directory 
 #! and have the option to either scan subdirectories or not.
 #! Recommend targeting the src folder and not the whole project folder.
+
+# TODO: Add case to exit when no python scripts could be found
+# TODO: If an exception occurs with scan or strip, try to continue to next file instead of exiting
 
 import re
 import os
@@ -19,6 +22,7 @@ def find_py_scripts(subdirectories: bool, directory: str):
     py_scripts = []
     py_script_count = 0
     
+    #TODO: Optimize this a bit so it looks less wonky
     # Scan through the specified directory and only scan subdirectories if specified
     try:
         if subdirectories:
@@ -63,7 +67,7 @@ def remove_type_hints(py_file_paths: dict):
             with open(py_file_path, 'w+') as py_file:
                 script_code = py_file.read()
                 modified_code = re.sub(r'(\s*->\s*[^:\n]+)', '', script_code)
-                modified_py_file.write(modified_code)
+                py_file.write(modified_code)
 
             print(f'Type hints removed in python script file "{py_file_path}".')
     except Exception as e:
@@ -87,12 +91,13 @@ def main():
             break
 
         if not os.path.isdir(directory):
-            print("Invalid directory, please enter a valid directory path...\n")
+            print("Invalid directory! Please enter a valid directory path...\n")
             continue
 
         # Valid directory has been inputted so we will break out of the loop
         break
     
+    # TODO: This can also be fixed to be a little less wonky
     # Ask if the script should also look inside subdirectories for python scripts too.
     while True:
         subdirectories = input(
